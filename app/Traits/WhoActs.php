@@ -5,12 +5,14 @@ namespace App\Traits;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 /**
  * Permet de connaître les derniers User ayant agit sur un Model
  *
  * @method userCreation() userCreation(): BelongsTo<User, $this>
  * @method userModification() userModification(): BelongsTo<User, $this>
  * @method userSuppression() userSuppression(): BelongsTo<User, $this>
+ * @phpstan-ignore trait.unused
  */
 trait WhoActs
 {

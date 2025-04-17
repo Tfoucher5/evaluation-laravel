@@ -19,7 +19,7 @@ Ensure the following software is installed on your Linux system:
 
 Run the following command to clone the repository to your local system:
 
-    git clone https://github.com/AryaMerlet/evaluation_laravel.git
+    git clone https://github.com/Tfoucher5/evaluation-laravel.git
     cd evaluation_laravel
 
 ### 2. Install PHP Dependencies

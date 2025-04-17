@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
-        Bouncer::assign('user')->to($user);
+        Bouncer::assign('salarie')->to($user);
 
         $admin = User::firstOrCreate([
             'first_name' => 'test',

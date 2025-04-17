@@ -91,4 +91,14 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Summary of taches
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Reservation, $this>
+     */
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }
