@@ -4,64 +4,99 @@ namespace Tests\Feature;
 
 use App\Mail\ReservationCanceled;
 use App\Models\Reservation;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class ReservationCanceledTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_has_the_correct_subject_and_view()
+    public function test_reservation_canceled_email_has_correct_content()
     {
-        // Create a reservation mock or factory
-        $reservation = Reservation::factory()->create();
-
-        // Create the mail instance
-        $mail = new ReservationCanceled($reservation);
-
-        // Build the mail
-        $builtMail = $mail->build();
-
-        // Assert the subject is correct
-        $this->assertEquals('Confirmation de votre annulation', $builtMail->subject);
-
-        // Assert the view is correct
-        $this->assertEquals('emails.reservation-canceled', $builtMail->view);
-    }
-
-    /** @test */
-    public function it_contains_the_reservation_data()
-    {
-        // Create a reservation mock or factory
-        $reservation = Reservation::factory()->create();
-
-        // Create the mail instance
-        $mail = new ReservationCanceled($reservation);
-
-        // Assert the reservation data is passed to the view
-        $this->assertEquals($reservation, $mail->reservation);
-    }
-
-    /** @test */
-    public function it_can_render_the_email()
-    {
-        // Create a reservation mock or factory
+        // Arrange
+        $user = User::factory()->create();
         $reservation = Reservation::factory()->create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            // Add other reservation fields as needed
+            'user_id' => $user->id,
         ]);
 
-        // Create the mail instance
-        $mail = new ReservationCanceled($reservation);
+        // Configurer Mail pour intercepter les emails
+        Mail::fake();
 
-        // This will throw an exception if the view cannot be rendered
-        $renderedMail = $mail->render();
+        // Act
+        $mailable = new ReservationCanceled($reservation);
 
-        // Assert the rendered email contains expected content
-        // Note: This assumes the view contains these elements
-        $this->assertStringContainsString($reservation->name, $renderedMail);
-        $this->assertStringContainsString($reservation->email, $renderedMail);
+        // Assert
+        $mailable->assertSeeInHtml($reservation->id);
+        $mailable->assertHasSubject('Confirmation de votre annulation');
+        $mailable->assertHasFrom(config('mail.from.address'), config('mail.from.name'));
+    }
+
+    public function test_reservation_canceled_email_contains_reservation_data()
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $reservation = Reservation::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        // Act
+        $mailable = new ReservationCanceled($reservation);
+
+        // Assert
+        $this->assertEquals($reservation->id, $mailable->reservation->id);
+        $this->assertEquals($reservation->user_id, $mailable->reservation->user_id);
+    }
+
+    public function test_reservation_canceled_email_renders_correct_view()
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $reservation = Reservation::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        // Act
+        $mailable = new ReservationCanceled($reservation);
+
+        // Assert
+        $mailable->assertViewIs('emails.reservation-canceled');
+    }
+
+    public function test_reservation_canceled_email_is_queued()
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $reservation = Reservation::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        // Act & Assert
+        Mail::fake();
+
+        Mail::to($user->email)->send(new ReservationCanceled($reservation));
+
+        Mail::assertQueued(ReservationCanceled::class, function ($mail) use ($reservation) {
+            return $mail->reservation->id === $reservation->id;
+        });
+    }
+
+    public function test_reservation_canceled_email_is_sent_to_correct_user()
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $reservation = Reservation::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        // Act & Assert
+        Mail::fake();
+
+        Mail::to($user->email)->send(new ReservationCanceled($reservation));
+
+        Mail::assertQueued(ReservationCanceled::class, function ($mail) use ($user) {
+            return $mail->hasTo($user->email);
+        });
     }
 }

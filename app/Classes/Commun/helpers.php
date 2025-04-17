@@ -299,23 +299,6 @@ if (! function_exists('bool_val')) { // @codeCoverageIgnore
     }
 }
 
-if (! function_exists('salaries')) { // @codeCoverageIgnore
-    /**
-     * @return Collection<string|int, User>
-     *
-     * @throws InvalidArgumentException
-     * @throws BadRequestException
-     */
-    function salaries()
-    {
-        if (Auth::check() && Auth::user()->isA('admin')) {
-            return User::whereIs('salarie')->get();
-        }
-
-        return collect([]);
-    }
-}
-
 if (! class_exists('BreadcrumbItem')) { // @codeCoverageIgnore
     class BreadcrumbItem
     {
@@ -328,42 +311,6 @@ if (! class_exists('BreadcrumbItem')) { // @codeCoverageIgnore
          */
         public function __construct(public string $libelle, public string $lien = '#', public bool $isActive = false)
         {
-        }
-    }
-}
-
-if (! class_exists('DateUSGPH')) { // @codeCoverageIgnore
-    class DateUSGPH
-    {
-        /**
-         * Summary of getUSGPHYear
-         *
-         * @param  \Carbon\Carbon|null  $currentDay
-         *
-         * @return array
-         */
-        public static function getUSGPHYear(?Carbon $currentDay = null)
-        {
-            if ($currentDay === null) {
-                $currentDay = Carbon::now();
-            } elseif ($currentDay instanceof \Carbon\Carbon) {
-                $currentDay = Carbon::parse($currentDay);
-            } elseif (! $currentDay instanceof Carbon) {
-                $currentDay = Carbon::parse($currentDay);
-            }
-            $currentYear = $currentDay->year;
-
-            if ($currentDay->gte(Carbon::create($currentYear, 9, 1))) {
-                return [
-                    'start' => Carbon::create($currentYear, 9, 1, 0, 0, 0),
-                    'end' => Carbon::create($currentYear + 1, 8, 31, 23, 59, 59),
-                ];
-            }
-
-            return [
-                'start' => Carbon::create($currentYear - 1, 9, 1, 0, 0, 0),
-                'end' => Carbon::create($currentYear, 8, 31, 23, 59, 59),
-            ];
         }
     }
 }
