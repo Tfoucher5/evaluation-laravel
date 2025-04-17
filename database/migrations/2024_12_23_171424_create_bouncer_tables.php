@@ -78,15 +78,6 @@ return new class extends Migration
                 ->references('id')->on(Models::table('abilities'))
                 ->onUpdate('cascade')->onDelete('cascade');
         });
-
-        $user = new User;
-        $user->first_name = 'Stéphane';
-        $user->last_name = 'Hervy';
-        $user->email = 'stephane.hervy@wiklog.fr';
-        $user->password = Hash::make('password');
-        $user->save();
-
-        Bouncer::assign(Role::ADMIN)->to($user);
     }
 
     /**

@@ -17,9 +17,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $user = User::firstOrCreate([
-            'first_name' => 'Erwan',
-            'last_name' => 'Baron',
-            'email' => 'erwan.baron@usgph.com',
+            'first_name' => 'Jean',
+            'last_name' => 'Michel',
+            'email' => 'jean.michel@evale.com',
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         $admin = User::firstOrCreate([
             'first_name' => 'test',
             'last_name' => 'admin',
-            'email' => 'testadmin@usgph.com',
+            'email' => 'testadmin@evale.com',
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
