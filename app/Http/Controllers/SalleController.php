@@ -54,38 +54,36 @@ class SalleController extends Controller
     /**
      * Affiche le formulaire de création d'une salle
      *
-     * @return RedirectResponse
+     * @return View|RedirectResponse
      */
     public function create()
     {
         if (auth()->user()->isA('salarie')) {
             Session::put('message', 'Vous n\'avez pas accès à cette page.');
             return redirect()->route('dashboard');
-        }
-        if (auth()->user()->isA('admin')) {
-
-            return redirect()->route('salles.create');
         } else {
-            return redirect()->route('salles.index')->with('error', 'Vous n\avez pas l\'autorisation d\'accéder à cette page.');
+            return view(self::PATH_VIEWS . '.add-modify');
+
         }
     }
 
     /**
      * Affiche le formulaire de création d'une salle
      *
-     * @return RedirectResponse
+     * @return View|RedirectResponse
      */
-    public function edit()
+    public function edit(int $id)
     {
         if (auth()->user()->isA('salarie')) {
             Session::put('message', 'Vous n\'avez pas accès à cette page.');
             return redirect()->route('dashboard');
         }
 
-        $salle = Salle::findOrFail(request()->id);
+        $salle = Salle::findOrFail($id);
 
-        return redirect()->route('salles.edit', compact('salle'));
+        return view(self::PATH_VIEWS . '.add-modify', compact('salle'));
     }
+
 
     /**
      * Créer une nouvelle salle
